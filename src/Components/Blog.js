@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useReducer } from "react";
 import { db } from "../firebaseInit.js";
-import { collection, addDoc, getDocs, onSnapshot } from "firebase/firestore";
+import { collection, addDoc, doc, getDocs, onSnapshot, deleteDoc } from "firebase/firestore";
 
 function blogsReducer(state, action) {
     switch (action.type) {
@@ -77,9 +77,11 @@ export default function Blog() {
         titleRef.current.focus();
     }
 
-    function removeBlog(i) {
+    async function removeBlog(id) {
         // setBlogs(blogs.filter((blog, index)=>index!==i));
-        dispatch({ type: "REMOVE", index: i })
+        // dispatch({ type: "REMOVE", index: i })
+        const docRef = doc(db, "blogs", id);
+        await deleteDoc(docRef);
     }
 
 
@@ -127,7 +129,7 @@ export default function Blog() {
                     <p>{blog.content}</p>
 
                     <div className="blog-btn">
-                        <button onClick={() => removeBlog(i)} className="btn remove">Delete</button>
+                        <button onClick={() => removeBlog(blog.id)} className="btn remove">Delete</button>
                     </div>
                 </div>
             ))}
